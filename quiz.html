@@ -1,0 +1,174 @@
+<!doctype HTML>
+<head>
+<style>
+body{
+    font-size: 20px;
+    font-family: sans-serif;
+    color: #333;
+}
+.question{
+    font-weight: 600;
+}
+.answers {
+  margin-bottom: 20px;
+}
+.answers label{
+  display: block;
+}
+#submit{
+    font-family: sans-serif;
+    font-size: 20px;
+    background-color: #279;
+    color: #fff;
+    border: 0px;
+    border-radius: 3px;
+    padding: 20px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+#submit:hover{
+    background-color: #38a;
+}
+</style>
+</head>
+<body>
+
+<div align="center" style="padding-bottom: 100px">
+<div id="quiz"></div>
+<button id="submit">Submit Quiz</button>
+<div id="results"></div>
+</div>
+
+<script>
+(function() {
+  function buildQuiz() {
+    // we'll need a place to store the HTML output
+    const output = [];
+
+    // for each question...
+    myQuestions.forEach((currentQuestion, questionNumber) => {
+      // we'll want to store the list of answer choices
+      const answers = [];
+
+      // and for each available answer...
+      for (letter in currentQuestion.answers) {
+        // ...add an HTML radio button
+        answers.push(
+          `<label>
+            <input type="radio" name="question${questionNumber}" value="${letter}">
+            ${letter} :
+            ${currentQuestion.answers[letter]}
+          </label>`
+        );
+      }
+
+      // add this question and its answers to the output
+      output.push(
+        `<div class="question"> ${currentQuestion.question} </div>
+        <img src="${currentQuestion.image}"/>
+        <div class="answers"> ${answers.join("")} </div>`
+      );
+    });
+
+    // finally combine our output list into one string of HTML and put it on the page
+    quizContainer.innerHTML = output.join("");
+  }
+
+  function showResults() {
+    // gather answer containers from our quiz
+    const answerContainers = quizContainer.querySelectorAll(".answers");
+
+    // keep track of user's answers
+    let numCorrect = 0;
+
+    // for each question...
+    myQuestions.forEach((currentQuestion, questionNumber) => {
+      // find selected answer
+      const answerContainer = answerContainers[questionNumber];
+      const selector = `input[name=question${questionNumber}]:checked`;
+      const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+      // if answer is correct
+      if (userAnswer === currentQuestion.correctAnswer) {
+        // add to the number of correct answers
+        numCorrect++;
+
+        // color the answers green
+        answerContainers[questionNumber].style.color = "lightgreen";
+      } else {
+        // if answer is wrong or blank
+        // color the answers red
+        answerContainers[questionNumber].style.color = "red";
+      }
+    });
+
+    // show number of correct answers out of total
+    resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
+  }
+
+  const quizContainer = document.getElementById("quiz");
+  const resultsContainer = document.getElementById("results");
+  const submitButton = document.getElementById("submit");
+  const myQuestions = [
+  {
+    question: "Whose smile are these?",
+    image: "http://screenshot.ontrapedia.com/public/keales/42bf1796-5609-4a85-917a-e42cf8fe56451533165267.png",
+    answers: {
+      a: "Casey",
+      b: "Josh G",
+      c: "Andrew"
+    },
+    correctAnswer: "c"
+  },
+  {
+    question: "Whose forehead are THESSEEE?",
+    image: "http://screenshot.ontrapedia.com/public/keales/e8582a63-2cb1-433b-8c60-18559ea0930f1533165354.png",
+    answers: {
+      a: "Brendan",
+      b: "Evan",
+      c: "Pete W"
+    },
+    correctAnswer: "b"
+  },
+  {
+    question: "Who dis smile belong to",
+    image: "http://screenshot.ontrapedia.com/public/keales/43d52876-5241-4630-866a-f84f75e823d71533165588.png",
+    answers: {
+      a: "Vinh",
+      b: "Quang",
+      c: "Sean"
+    },
+    correctAnswer: "b"
+  },
+  {
+    question: "Who dis",
+    image: "http://screenshot.ontrapedia.com/public/keales/623b1f90-073d-451d-938d-d41c8025e0111533165469.png",
+    answers: {
+      a: "Noble",
+      b: "Kevbot",
+      c: "Brad"
+    },
+    correctAnswer: "a"
+  },
+  {
+    question: "Who dat",
+    image: "http://screenshot.ontrapedia.com/public/keales/a033af08-3e28-4fc9-b422-b43d52e33a731533165517.png",
+    answers: {
+      a: "Tatiana",
+      b: "Shawn",
+      c: "Nikki"
+    },
+    correctAnswer: "b"
+  }
+];
+
+  // display quiz right away
+  buildQuiz();
+
+  // on submit, show results
+  submitButton.addEventListener("click", showResults);
+})();
+</script>
+
+</body>
+</html>
